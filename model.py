@@ -4,7 +4,16 @@ from dict import Vocabulary
 
 from dict import letter_list,letter_list_text
 
+'''
 
+def onehot(x):
+    if x == 0:
+        return np.array([1.0,0.0])
+    else:
+        return np.array([0.0,1.0])
+
+
+'''
 
 class TextRnn():
     
@@ -13,7 +22,7 @@ class TextRnn():
         
         self.real_len = tf.placeholder(tf.float32)
         
-        self.input_data = tf.placeholder(tf.int32,[None,20])
+        self.input_data = tf.placeholder(tf.int32,[None,1])
         self.label_data = tf.placeholder(tf.int32,[None,n_classes])
         
 
@@ -47,9 +56,10 @@ class TextRnn():
         print self.embedded_chars.get_shape
         
         #inputs = [tf.squeeze(input_, [1]) for input_ in tf.split(1, reduced, pooled_concat)]
-        inputs = [tf.squeeze(input_,[1])for input_ in tf.split(1,embedding_size,self.embedded_chars)]
+        #inputs = [tf.squeeze(input_,[1])for input_ in tf.split(embedding_size,self.embedded_chars)]
+        inputs = [tf.squeeze(self.embedded_chars,[1]) ]
         #lstm_cell = tf.nn.rnn_cell.BasicLSTMCell(self.rnn_size)
-        self.output,self.state = tf.nn.rnn(lstm_cell,inputs,initial_state= self.state,sequence_length = self.real_len)
+        self.output,self.state = tf.nn.dynamic_rnn(lstm_cell,inputs,initial_state= self.state,sequence_length = self.real_len)
         
         self.logits = tf.matmul(self.output[-1],self.w) + self.b
         
@@ -58,7 +68,7 @@ class TextRnn():
         self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(self.probs, self.label_data))
 
         
-        self.opitimizer  = tf.train.AdamOptimizer(learning_rate = 0.001).minimize(self.loss)
+        self.optimizer  = tf.train.AdamOptimizer(learning_rate = 0.001).minimize(self.loss)
         
         self.sess = tf.InteractiveSession()
 
@@ -67,19 +77,29 @@ class TextRnn():
 
         #pass
 
+
+    def onehot(x):
+        if x == 0:
+            return np.array([1.0,0.0])
+        else:
+            return np.array([0.0,1.0])
+
     def run_line(self,x_list,y):
         
         self.state = self._initial_state
         
+        print x_list
         
-        for x in xlist:
-            feed_dict_x = {self.input_data:x}
+        x_list = np.array(x_list)
+        x_list = np.resize(x_list,(len(x_list),1))
+        print x_list.shape
+        feed_dict = {self.input_data:x_list,self.label_data:y,self.real_len:len(x_list)}
             
-            self.sess.run(self.output,self.state,feed_dict = feed_dict_x)
+        #self.sess.run(self.output,self.state,feed_dict = feed_dict_x)
         
-            
-        feed_dict_y = {self.label_data :y}
-        self.sess.run(self.optimizer,feed_dict= feed_dict_y)
+        
+        
+        self.sess.run(self.optimizer,feed_dict= feed_dict)
 
     def train(self,vocab_file,epoch_size):
 
@@ -95,17 +115,27 @@ class TextRnn():
 
         for e in range(epoch_size):
             for line in lines:
+                print line
                 line = str(line)
                 
-                xlist ,y = letter_list_text(line)
+                xlist ,y = letter_list(line)
                 
-                y = one_hot(y)
+                print y
+                print type(y)
+                
+                
+                if y == 0:
+                    y = np.array([1.0,0.0])
+                else:
+                    y = np.array([0.0,1.0])
+            
+                
                 x_list_use =[]
                 for x in xlist:
                     x_list_use.append(vocab.l2i[x])
-
+                y = np.resize(y,(1,2))
                 
-                sef.run_line(xlist_use,y)
+                self.run_line(x_list_use,y)
                 
                 
                 
