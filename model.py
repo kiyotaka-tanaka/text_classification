@@ -38,8 +38,6 @@ class TextRnn():
         
 
 
-
-
         self.w = tf.Variable(tf.truncated_normal([rnn_size,n_classes],stddev=0.1))
         self.b = tf.Variable(tf.truncated_normal([n_classes],stddev= 0.1))
 
@@ -50,24 +48,40 @@ class TextRnn():
         lstm_cell = tf.nn.rnn_cell.BasicLSTMCell(rnn_size)
         self._initial_state = lstm_cell.zero_state(embedding_size, tf.float32)
         self.state = self._initial_state
-
+        
         self.embedded_chars = tf.nn.embedding_lookup(self.embedding,self.input_data)
         
-        print self.embedded_chars.get_shape
+
+        print "embedding size"
+        print self.embedded_chars.get_shape()
         
         #inputs = [tf.squeeze(input_, [1]) for input_ in tf.split(1, reduced, pooled_concat)]
         #inputs = [tf.squeeze(input_,[1])for input_ in tf.split(embedding_size,self.embedded_chars)]
         inputs = [tf.squeeze(self.embedded_chars,[1]) ]
+        print "input size input size"
+        print len(inputs) ,inputs[0].get_shape()
         #lstm_cell = tf.nn.rnn_cell.BasicLSTMCell(self.rnn_size)
-        self.output,self.state = tf.nn.dynamic_rnn(lstm_cell,inputs,initial_state= self.state,sequence_length = self.real_len)
-        
-        self.logits = tf.matmul(self.output[-1],self.w) + self.b
-        
-        self.probs = tf.nn.softmax(self.logits)
+        self.outputs,self.state = tf.nn.rnn(lstm_cell,inputs,initial_state= self.state,sequence_length = self.real_len)
 
+        
+        print "bias shape bias shape bias shape"
+        
+        print self.b.get_shape()
+        
+        output = self.outputs[-1]
+
+        print "output size "
+        print output.get_shape()
+        self.logits = tf.matmul(output,self.w) + self.b
+        print "logits shape logits shape"
+        print self.logits.get_shape()
+        logits = self.logits[-1]
+        self.probs = tf.nn.softmax(logits)
+        #self.score = tf.argmax(self.probs,1)
         self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(self.probs, self.label_data))
-
         
+        print "last last last last last last last "
+        print self.logits.get_shape(),self.label_data.get_shape
         self.optimizer  = tf.train.AdamOptimizer(learning_rate = 0.001).minimize(self.loss)
         
         self.sess = tf.InteractiveSession()
@@ -87,12 +101,14 @@ class TextRnn():
     def run_line(self,x_list,y):
         
         self.state = self._initial_state
-        
+        print "from run line"
         print x_list
         
         x_list = np.array(x_list)
+        x_list = x_list[0:20]
         x_list = np.resize(x_list,(len(x_list),1))
         print x_list.shape
+        
         feed_dict = {self.input_data:x_list,self.label_data:y,self.real_len:len(x_list)}
             
         #self.sess.run(self.output,self.state,feed_dict = feed_dict_x)
@@ -116,6 +132,8 @@ class TextRnn():
         for e in range(epoch_size):
             for line in lines:
                 print line
+
+                print "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
                 line = str(line)
                 
                 xlist ,y = letter_list(line)
