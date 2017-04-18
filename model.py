@@ -103,8 +103,12 @@ class TextRnn():
         self.state = self._initial_state
         print "from run line"
         print x_list
-        
+        print len(x_list)
+        while len(x_list) < 20:
+            x_list.append(0)
         x_list = np.array(x_list)
+
+
         x_list = x_list[0:20]
         x_list = np.resize(x_list,(len(x_list),1))
         print x_list.shape
@@ -119,8 +123,8 @@ class TextRnn():
 
     def train(self,vocab_file,epoch_size):
 
-        
-        self.sess.run(tf.global_variables_initializer())
+        self.sess.run(tf.initialize_all_variables())
+        #self.sess.run(tf.global_variables_initializer())
 
 
         vocab = Vocabulary(vocab_file)
