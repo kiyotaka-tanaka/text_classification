@@ -22,9 +22,9 @@ args = parser.parse_args()
 
 model = TextRnn(args.embedding_size,args.vocab_file,5,args.rnn_size)
 
-
+sess = tf.InteractiveSession()
 saver = tf.train.Saver()
 
-saver.restore(model.sess,"model.ckpt")
+saver.restore(sess,"./models/my-model.ckpt")
 
 
