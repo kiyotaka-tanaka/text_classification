@@ -52,36 +52,36 @@ class TextRnn():
         self.embedded_chars = tf.nn.embedding_lookup(self.embedding,self.input_data)
         
 
-        print "embedding size"
-        print self.embedded_chars.get_shape()
+        #print "embedding size"
+        #print self.embedded_chars.get_shape()
         
         #inputs = [tf.squeeze(input_, [1]) for input_ in tf.split(1, reduced, pooled_concat)]
         #inputs = [tf.squeeze(input_,[1])for input_ in tf.split(embedding_size,self.embedded_chars)]
         inputs = [tf.squeeze(self.embedded_chars,[1]) ]
-        print "input size input size"
-        print len(inputs) ,inputs[0].get_shape()
+        #print "input size input size"
+        #print len(inputs) ,inputs[0].get_shape()
         #lstm_cell = tf.nn.rnn_cell.BasicLSTMCell(self.rnn_size)
+        #self.outputs,self.state = tf.nn.rnn(lstm_cell,inputs,initial_state= self._initial_state,sequence_length = self.real_len)
         self.outputs,self.state = tf.nn.rnn(lstm_cell,inputs,initial_state= self.state,sequence_length = self.real_len)
-
         
-        print "bias shape bias shape bias shape"
+        #print "bias shape bias shape bias shape"
         
-        print self.b.get_shape()
+        #print self.b.get_shape()
         
         output = self.outputs[-1]
 
-        print "output size "
-        print output.get_shape()
+        #print "output size "
+        #print output.get_shape()
         self.logits = tf.matmul(output,self.w) + self.b
-        print "logits shape logits shape"
-        print self.logits.get_shape()
+        #print "logits shape logits shape"
+        #print self.logits.get_shape()
         logits = self.logits[-1]
         self.probs = tf.nn.softmax(logits)
         #self.score = tf.argmax(self.probs,1)
         self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(self.probs, self.label_data))
         
-        print "last last last last last last last "
-        print self.logits.get_shape(),self.label_data.get_shape
+        #print "last last last last last last last "
+        #print self.logits.get_shape(),self.label_data.get_shape
         self.optimizer  = tf.train.AdamOptimizer(learning_rate = 0.001).minimize(self.loss)
         
         self.sess = tf.InteractiveSession()
@@ -109,9 +109,9 @@ class TextRnn():
     def run_line(self,x_list,y):
         
         self.state = self._initial_state
-        print "from run line"
-        print x_list
-        print len(x_list)
+        #print "from run line"
+        #print x_list
+        #print len(x_list)
         while len(x_list) < 20:
             x_list.append(0)
         x_list = np.array(x_list)
@@ -119,9 +119,9 @@ class TextRnn():
 
         x_list = x_list[0:20]
         x_list = np.resize(x_list,(len(x_list),1))
-        print x_list.shape
-        print "run line label run line label"
-        print y
+        #print x_list.shape
+        #print "run line label run line label"
+        #print y
 
         feed_dict = {self.input_data:x_list,self.label_data:y,self.real_len:len(x_list)}
             
@@ -144,6 +144,8 @@ class TextRnn():
         lines = f.readlines()
 
         for e in range(epoch_size):
+            print "epoch number is  "
+            print e
             for line in lines:
                                 
                 line = str(line)
@@ -151,9 +153,9 @@ class TextRnn():
                 if len(line) < 3:
                     continue
                 xlist ,y = letter_list(line)
-                print "yyyyyyyyyyyyyyyyyyyyyyyy"
-                print y
-                print type(y)
+                #print "yyyyyyyyyyyyyyyyyyyyyyyy"
+                #print y
+                #print type(y)
                 
                 '''
                 if y == 0:
@@ -165,8 +167,8 @@ class TextRnn():
                 
                 
                 y = self.onehot(y,size)
-                print "label label label"
-                print y
+                #print "label label label"
+                #print y
                 x_list_use =[]
                 for x in xlist:
                     x_list_use.append(vocab.l2i[x])

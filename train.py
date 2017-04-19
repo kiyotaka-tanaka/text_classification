@@ -61,9 +61,9 @@ def train_here():
 
     model = TextRnn(args.embedding_size,args.vocab_file,5,args.rnn_size)
 
-    model.train("data_new.txt",200)
+    #model.train("data_new.txt",200)
 
-    model = TextRnn(args.embedding_size,args.vocab_file,2,args.rnn_size)
+    #model = TextRnn(args.embedding_size,args.vocab_file,2,args.rnn_size)
     
     saver = tf.train.Saver()
     model.train("data.txt",200)
