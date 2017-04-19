@@ -25,7 +25,7 @@ class TextRnn():
         self.input_data = tf.placeholder(tf.int32,[None,1])
         self.label_data = tf.placeholder(tf.int32,[None,n_classes])
         
-
+        self.n_classes = n_classes
         self.batch_size = tf.placeholder(tf.int32)
 
 
@@ -92,11 +92,19 @@ class TextRnn():
         #pass
 
 
-    def onehot(x):
+    def onehot(self,x,size):
+
+        '''
         if x == 0:
             return np.array([1.0,0.0])
         else:
             return np.array([0.0,1.0])
+        '''
+        
+        ret = np.zeros((size),dtype= float)
+        ret[x-1] = 1.0
+        return ret
+
 
     def run_line(self,x_list,y):
         
@@ -112,7 +120,9 @@ class TextRnn():
         x_list = x_list[0:20]
         x_list = np.resize(x_list,(len(x_list),1))
         print x_list.shape
-        
+        print "run line label run line label"
+        print y
+
         feed_dict = {self.input_data:x_list,self.label_data:y,self.real_len:len(x_list)}
             
         #self.sess.run(self.output,self.state,feed_dict = feed_dict_x)
@@ -135,27 +145,32 @@ class TextRnn():
 
         for e in range(epoch_size):
             for line in lines:
-                print line
-
-                print "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                                
                 line = str(line)
                 
+                if len(line) < 3:
+                    continue
                 xlist ,y = letter_list(line)
-                
+                print "yyyyyyyyyyyyyyyyyyyyyyyy"
                 print y
                 print type(y)
                 
-                
+                '''
                 if y == 0:
                     y = np.array([1.0,0.0])
                 else:
                     y = np.array([0.0,1.0])
-            
+                '''
+                size = self.n_classes
                 
+                
+                y = self.onehot(y,size)
+                print "label label label"
+                print y
                 x_list_use =[]
                 for x in xlist:
                     x_list_use.append(vocab.l2i[x])
-                y = np.resize(y,(1,2))
+                y = np.resize(y,(1,5))
                 
                 self.run_line(x_list_use,y)
                 
