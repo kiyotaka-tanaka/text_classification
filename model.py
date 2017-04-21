@@ -53,8 +53,8 @@ class TextRnn():
         
         inputs = [tf.squeeze(self.embedded_chars,[1]) ]
 
-        self.outputs,self.state = tf.nn.rnn(lstm_cell,inputs,initial_state= self.state,sequence_length = self.real_len)
-        
+        #self.outputs,self.state = tf.nn.rnn(lstm_cell,inputs,initial_state= self.state,sequence_length = self.real_len)
+        self.outputs,self.state = tf.nn.rnn(lstm_cell,inputs,initial_state= self._initial_state,sequence_length = self.real_len)
 
         
         output = self.outputs[-1]
@@ -64,10 +64,10 @@ class TextRnn():
 
         logits = self.logits[-1]
         self.probs = tf.nn.softmax(logits)
-        self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(self.probs, self.label_data))
+        self.loss = tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits(self.probs, self.label_data))
         
 
-        self.optimizer  = tf.train.AdamOptimizer(learning_rate = 0.001).minimize(self.loss)
+        self.optimizer  = tf.train.AdamOptimizer(learning_rate = 0.00001).minimize(self.loss)
         
         self.sess = tf.InteractiveSession()
 
@@ -147,7 +147,7 @@ class TextRnn():
                 x_list_use =[]
                 for x in xlist:
                     x_list_use.append(vocab.l2i[x])
-                y = np.resize(y,(1,5))
+                y = np.resize(y,(1,len(y)))
                 
                 loss += self.run_line(x_list_use,y)
             print loss
