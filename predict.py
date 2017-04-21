@@ -18,7 +18,7 @@ parser.add_argument("--model_path",help="model save path",type=str,default="./mo
 #parser.add_argument("--max_epochs",help="max_epochs",type=int,default=300)
 #parser.add_argument("--vocab_size",help = "vocabulary",type=int)
 #parser.add_argument("--batch_size",help="batch_size",type =int,default=20)
-parser.add_argument("--vocab_file",help="vocabulary file",type=str,default ="./data_new.txt")
+parser.add_argument("--vocab_file",help="vocabulary file",type=str,default ="./data_use.txt")
 parser.add_argument("--input",help= "text file to classify",type=str,default="日本の未来")
 parser.add_argument("--n_classes",help = "label size ",type = int , default=5)
 args = parser.parse_args()
