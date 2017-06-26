@@ -9,7 +9,13 @@ INSTALLATION:
        
        tensorflow →→→　　　　　　pip install tensorflow-gpu==0.12.0
        MeCab 　　　→→→　　　　　　pip install mecab-python
-       
+
+About code:
+    text_cnn_rnn.py がテクストデータを学習するモデル
+    train.py 　　　　学習コード
+    predict.py       テクストを予測
+    
+
 HOW TO USE:
 　学習データの形式　　　txt 
         example 
@@ -24,5 +30,5 @@ HOW TO USE:
  予測用　predict.py
          python predict.py --input_text  軽くて使いやすいです　--model_path ./models/my-model.ckpt
        
-       
+              
       
