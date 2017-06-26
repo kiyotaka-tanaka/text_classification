@@ -11,6 +11,18 @@ INSTALLATION:
        MeCab 　　　→→→　　　　　　pip install mecab-python
        
 HOW TO USE:
+　学習データの形式　　　txt 
+        example 
+           軽くて使いやすいです。,1
+           容量の大きさによって、端末に入れる本の数を気にする必要性が無い。,1
+           ライブラリ表示はもっさりどころかページを切り替えるたびにフリーズ,2
+           １６，０００円以上する精密機器を、手渡しせず集合住宅の外部郵便受けに投函配送する感覚に驚きました。,2
+
+  
+ 学習用　train.py 
+       python train.py --embedding_size 300 --train_data data.txt --config_file training_config.json --sequence_length 100 
+ 予測用　predict.py
+         python predict.py --input_text  軽くて使いやすいです　--model_path ./models/my-model.ckpt
        
        
       
