@@ -1,0 +1,16 @@
+REQUIREMENTS:
+      tensorflow = (0.12.0)
+      MeCab 
+      numpy 
+      json
+INSTALLATION:
+       virtual environment →→　virtualenv --no-site-packages env2k
+       activate   →→　　　　　　source env2k/bin/activate
+       
+       tensorflow →→→　　　　　　pip install tensorflow-gpu==0.12.0
+       MeCab 　　　→→→　　　　　　pip install mecab-python
+       
+HOW TO USE:
+       
+       
+      
