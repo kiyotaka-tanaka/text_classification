@@ -35,7 +35,10 @@ class Vocabulary:
         with open(self.fname) as f:
             for line in f:
                 line = str(line[:-3])
-                result = jumanpp.analysis(line)
+                try:
+                    result = jumanpp.analysis(line)
+                except:
+                    continue
                 for mprh in result.mrph_list():
                     self.append_letter(mprh.midasi)
     def save_Vocab(self,vocabname):
